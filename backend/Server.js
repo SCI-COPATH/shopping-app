@@ -3,6 +3,7 @@ const mysql = require("mysql")
 const cors = require("cors")
 
 const app = express()
+app.use(express.json())
 app.use(cors())
 
 const db = mysql.createConnection({
@@ -23,14 +24,16 @@ app.get("/users", (req, res) => {
     return res.json(data)
   })
 })
-app.post("/signup", (req, res) => {
-  const sql = "INSERT INTO users (`name`,`userId`,`password`)"
-  const values = [req.body.name, req.body.userId, req.body.password]
-  db.query(sql, [values], (err, data) => {
+app.post("/register", async (req, res) => {
+  const { name, userId, password } = req.body
+  const sql = "INSERT INTO users (name, userId, password) VALUES (?, ?, ?)"
+
+  db.query(sql, [name, userId, password], (err, data) => {
     if (err) return res.json("error")
     return res.json(data)
   })
 })
+
 app.listen(8081, () => {
   console.log("listing")
 })

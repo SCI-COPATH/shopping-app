@@ -10,3 +10,6 @@ inside our package.json inside the
 npm install react-router-dom
 npm install Axios
 npm install immer use-immer
+
+demo
+https://github.com/dennisiluma/jwt-Auth-node_plus_frontend/tree/nodeMysqlReact
