@@ -37,17 +37,17 @@ function SignupPage() {
           </div>
           <label htmlFor="Email">Email</label>
           <div>
-            <input type="email" onChange={(e) => setUserId(e.target.value)} placeholder="enter your email here" id="Email" />
+            <input type="email" onChange={(e) => setUserId(e.target.value)} placeholder="Enter your email here" id="Email" />
           </div>
           <label htmlFor="password">Password</label>
 
           <div>
-            <input type="password" onChange={(e) => setPassword(e.target.value)} placeholder="enter new password" id="password" />
+            <input type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Enter new password" id="password" />
           </div>
           <label htmlFor="cpassword">Confirm Password</label>
 
           <div>
-            <input type="text" placeholder="confirm  new password" id="cpassword" />
+            <input type="text" placeholder="Confirm  new password" id="cpassword" />
           </div>
           <div className="spacer"></div>
           <input type="submit" value="Sign Up" className="subBut" />

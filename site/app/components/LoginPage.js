@@ -38,7 +38,7 @@ function LoginPage() {
           <label htmlFor="password">Password</label>
 
           <div>
-            <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="enter your password here" id="password" />
+            <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password here" id="password" />
           </div>
           <div className="spacer"></div>
           <input type="submit" value="login" className="subBut" />
