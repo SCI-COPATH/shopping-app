@@ -1,20 +1,26 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Page from "./Page"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Axios from "axios"
+import DispachContext from "../DispachContext"
 
 function SignupPage() {
   const [userId, setUserId] = useState()
   const [password, setPassword] = useState()
-  const [name, setName] = useState()
+  const [userName, setUserName] = useState()
+  const appContext = useContext(DispachContext)
+  const naviagte = useNavigate()
   async function handilSublit(e) {
     e.preventDefault()
-    console.log(userId)
-    console.log(password)
-    console.log(name)
+    // console.log(userId)
+    // console.log(password)
+    // console.log(name)
     try {
-      await Axios.post("http://localhost:8081/register", { name, userId, password })
+      const response = await Axios.post("/register", { userName, userId, password })
       console.log("User was successfully created.")
+      console.log(response.data.user)
+      appContext({ type: "login", data: response.data.user })
+      naviagte("/")
     } catch (e) {
       console.log(e)
     }
@@ -27,7 +33,7 @@ function SignupPage() {
         <div className="form-ele">
           <label htmlFor="name">Name</label>
           <div>
-            <input type="text" onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" id="name" />
+            <input type="text" onChange={(e) => setUserName(e.target.value)} placeholder="Enter your full name" id="name" />
           </div>
           <label htmlFor="Email">Email</label>
           <div>

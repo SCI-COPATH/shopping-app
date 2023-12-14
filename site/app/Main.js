@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import ReactDOM from "react-dom/client"
 
 import { BrowserRouter, Route, Routes } from "react-router-dom"
@@ -10,16 +10,21 @@ import DispachContext from "./DispachContext"
 import Home from "./components/Home"
 import WelcomeGuest from "./components/welcomeGuset"
 import Axios from "axios"
-// Axios.defaults.baseURL = "http://localhost:8081"
+Axios.defaults.baseURL = "http://localhost:8081"
 
 function Main() {
   const initialStage = {
-    loggedIn: 0,
+    loggedIn: Boolean(localStorage.getItem("token")),
+    user: {
+      userName: localStorage.getItem("userName"),
+      token: localStorage.getItem("token"),
+    },
   }
   function ourReducer(draft, action) {
     switch (action.type) {
       case "login":
         draft.loggedIn = true
+        draft.user = action.data
         return
       case "logout":
         draft.loggedIn = false
@@ -27,7 +32,18 @@ function Main() {
     }
   }
   const [state, dispatch] = useImmerReducer(ourReducer, initialStage)
-
+  useEffect(() => {
+    console.log("Inisde use effect")
+    if (state.loggedIn) {
+      console.log("Login is true")
+      localStorage.setItem("userName", state.user.userName)
+      localStorage.setItem("token", state.user.token)
+      console.log("prob")
+    } else {
+      localStorage.removeItem("userName")
+      localStorage.removeItem("token")
+    }
+  }, [state.loggedIn])
   return (
     <StateContext.Provider value={state}>
       <DispachContext.Provider value={dispatch}>
