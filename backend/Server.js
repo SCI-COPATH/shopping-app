@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const db = require("./db/connection.js")
 
-const my_secret_key = "kanfkahbf3a65a1afbhg"
+const user_secret_key = "kanfkahbf3a65a1afbhg"
 const app = express()
 const port = 8081
 app.use(express.json())
@@ -27,7 +27,7 @@ app.post("/register", async (req, res) => {
     if (err) {
       console.log("Error In Registration: " + err)
     } else {
-      const token = jwt.sign({ userId: userId }, my_secret_key, { expiresIn: "1h" })
+      const token = jwt.sign({ userId: userId }, user_secret_key, { expiresIn: "1h" })
 
       console.log(token)
       res.json({
@@ -61,7 +61,7 @@ app.post("/login", async (req, res) => {
       console.log(result[0].userName)
       if (match) {
         //create a jwt token
-        const token = jwt.sign({ userId: result[0].id }, my_secret_key, { expiresIn: "1h" })
+        const token = jwt.sign({ userId: result[0].id }, user_secret_key, { expiresIn: "1h" })
         res.json({
           message: "Login Successful",
           user: {
@@ -77,7 +77,7 @@ app.post("/login", async (req, res) => {
 })
 
 //Authentication Middleware using JWT
-const authenticate = (req, res, next) => {
+const userAuthenticate = (req, res, next) => {
   const token = req.header("Authorization")
   console.log("Unextracted Token: " + token)
 
@@ -89,7 +89,7 @@ const authenticate = (req, res, next) => {
 
   try {
     // /verift and validate our token
-    const decoded = jwt.verify(extractedToken, my_secret_key)
+    const decoded = jwt.verify(extractedToken, user_secret_key)
     req.userId = decoded.userId
     next()
   } catch (err) {
@@ -97,7 +97,7 @@ const authenticate = (req, res, next) => {
   }
 }
 
-app.get("/profile", authenticate, (req, res) => {
+app.get("/profile", userAuthenticate, (req, res) => {
   const userId = req.userId
   const sql = "SELECT * FROM users WHERE id = ?"
   db.query(sql, [userId], (err, result) => {
