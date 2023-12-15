@@ -12,6 +12,10 @@ import WelcomeGuest from "./components/welcomeGuset"
 import Axios from "axios"
 Axios.defaults.baseURL = "http://localhost:8081"
 
+import Profile from "./components/Profile"
+import YourOrder from "./components/YourOrder"
+import Cart from "./components/Cart"
+
 function Main() {
   const initialStage = {
     loggedIn: Boolean(localStorage.getItem("token")),
@@ -55,6 +59,9 @@ function Main() {
             <Route path="/" element={state.loggedIn ? <Home /> : <WelcomeGuest />} />
             <Route path="/log-in" element={<LoginPage />} />
             <Route path="/sign-up" element={<SignupPage />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/orders" element={<YourOrder />} />
+            <Route path="/cart" element={<Cart />} />
           </Routes>
         </BrowserRouter>
       </DispachContext.Provider>
