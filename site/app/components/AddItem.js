@@ -1,48 +1,94 @@
-import React, { useEffect } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Header from "./Header"
 import Page from "./Page"
+import Axios from "axios"
+import StateContext from "../StateContext"
+import DispachContext from "../DispachContext"
+import { useNavigate } from "react-router-dom"
 
 function AddItem() {
+  const appStatus = useContext(StateContext)
+  const appDispach = useContext(DispachContext)
+  const naviater = useNavigate()
+  const [image, setImage] = useState()
+  const [name, setName] = useState()
+  const [catagory, setCatagory] = useState()
+  const [qty, setQty] = useState()
+  const [mrp, setMrp] = useState()
+  const [realRate, setRealRate] = useState()
+  const [brand, setBrand] = useState()
+  const [discription, setDiscription] = useState()
+  async function handilSubmit(e) {
+    e.preventDefault()
+    try {
+      const formData = new FormData()
+      formData.append("image", image)
+      formData.append("token", appStatus.user.token)
+      formData.append("name", name)
+      formData.append("catagory", catagory)
+      formData.append("qty", qty)
+      formData.append("mrp", mrp)
+      formData.append("realRate", realRate)
+      formData.append("brand", brand)
+      formData.append("discription", discription)
+
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+
+      const responce = await Axios.post("/addItems", formData, config)
+
+      console.log(responce)
+    } catch (error) {
+      if (error.response.data == "Invalid Token" || error.response.data == "Unauthorized") {
+        appDispach({ type: "logout" })
+        naviater("/")
+      }
+      console.log(error.response.data)
+    }
+  }
   return (
     <>
       <Header />
       <Page title="Add item" formMode={true}>
-        <form className="intermediateForm">
+        <form className="intermediateForm" onSubmit={handilSubmit}>
           <h2>Add Item </h2>
           <div className="form-ele">
             <div>
               <label htmlFor="name">Name</label>
-              <input type="text" id="name" placeholder="Samsung Galexy S23" />
+              <input onChange={(e) => setName(e.target.value)} type="text" id="name" placeholder="Samsung Galexy S23" />
             </div>
             <div>
-              <label htmlFor="Catagory">Catagory</label>
-              <input type="text" id="catagory" placeholder="Electronics" />
+              <label htmlFor="catagory">Catagory</label>
+              <input onChange={(e) => setCatagory(e.target.value)} type="text" id="catagory" placeholder="Electronics" />
             </div>
             <div>
               <label htmlFor="qunity">Quntaty</label>
-              <input type="number" id="qunity" placeholder="100" />
+              <input onChange={(e) => setQty(e.target.value)} type="number" id="qunity" placeholder="100" />
             </div>
             <div>
               <label htmlFor="rate">Horsail prise</label>
-              <input type="number" id="rate" placeholder="80000" />
+              <input onChange={(e) => setRealRate(e.target.value)} type="number" id="rate" placeholder="80000" />
             </div>
             <div>
               <label htmlFor="MRP">MRP</label>
-              <input type="number" id="MRP" placeholder="90000" />
+              <input onChange={(e) => setMrp(e.target.value)} type="number" id="MRP" placeholder="90000" />
             </div>
 
             <div>
               <label htmlFor="brand">Brand</label>
-              <input type="text" id="brand" placeholder="Samsung" />
+              <input onChange={(e) => setBrand(e.target.value)} type="text" id="brand" placeholder="Samsung" />
             </div>
             <div>
               <label htmlFor="disc">Discription</label>
               <br />
-              <textarea id="disc" cols="60" rows="10" placeholder="Discription"></textarea>
+              <textarea onChange={(e) => setDiscription(e.target.value)} id="disc" cols="60" rows="10" placeholder="Discription"></textarea>
             </div>
             <div>
               <label htmlFor="image">Product Image</label>
-              <input type="file" id="image" />
+              <input type="file" accept="image/*" id="image" onChange={(e) => setImage(e.target.files[0])} />
             </div>
             <button className="mt-2 mb-5 btn btn-primary" type="submit">
               Add item

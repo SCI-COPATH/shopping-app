@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useContext, useEffect } from "react"
 import { createRoot } from "react-dom/client"
 
 import { BrowserRouter, Route, Routes } from "react-router-dom"
@@ -56,6 +56,41 @@ function Main() {
       localStorage.removeItem("userType")
     }
   }, [state.loggedIn])
+  useEffect(() => {
+    console.log("run in start")
+    async function updateToken() {
+      try {
+        const res = await Axios.post("/checkAuth", { userId: state.user.userName, tokrn: state.user.token, userType: state.user.userType })
+        console.log(res.data.user)
+        state.user = res.data.user
+        if (res.data.message != "token Expried") {
+          localStorage.setItem("token", res.data.user.token)
+        } else {
+          localStorage.removeItem("userName")
+          localStorage.removeItem("token")
+          localStorage.removeItem("avatar")
+          localStorage.removeItem("userType")
+        }
+      } catch (error) {
+        localStorage.removeItem("userName")
+        localStorage.removeItem("token")
+        localStorage.removeItem("avatar")
+        localStorage.removeItem("userType")
+        state.user.token = ""
+        state.user.userName = ""
+        state.user.userType = ""
+        state.user.avatar = ""
+        state.loggedIn = "false"
+      }
+    }
+    if (Boolean(state.user.token)) {
+      // try {
+      updateToken()
+      // } catch (error) {
+      //   console.log("ERROR")
+      // }
+    }
+  }, [])
   return (
     <StateContext.Provider value={state}>
       <DispachContext.Provider value={dispatch}>

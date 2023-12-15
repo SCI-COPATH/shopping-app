@@ -2,14 +2,152 @@ const express = require("express")
 const cors = require("cors")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const multer = require("multer")
+const path = require("path")
+
 const db = require("./db/connection.js")
 const md5 = require("md5")
 const user_secret_key = "kanfkahbf3a65a1afbhg"
 const admin_secret_key = "4pkbjeb46lmkjhe6j546"
+
 const app = express()
 const port = 8081
+
 app.use(express.json())
 app.use(cors())
+
+const isImage = (req, file, callback) => {
+  if (file.mimetype.startsWith("image")) {
+    callback(null, true)
+  } else {
+    callback(null, Error("only image is allowd"))
+  }
+}
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/items")
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+  },
+})
+
+const upload = multer({
+  storage: storage,
+  fileFilter: isImage,
+})
+//Authentication Middleware using JWT
+const userAuthenticate = (req, res, next) => {
+  const token = req.header("Authorization")
+  console.log("Unextracted Token: " + token)
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" })
+  }
+  const extractedToken = token.split(" ")[1]
+  console.log("Actual TOken: " + extractedToken)
+
+  try {
+    // /verift and validate our token
+    const decoded = jwt.verify(extractedToken, user_secret_key)
+    req.userId = decoded.userId
+    next()
+  } catch (err) {
+    res.status(401).json({ message: "Invalid Token" })
+  }
+}
+const adminAuthenticate = (req, res, next) => {
+  const token = req.header("Authorization")
+
+  console.log("Unextracted Token: " + token)
+
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" })
+  }
+  const extractedToken = token.split(" ")[1]
+  console.log("Actual TOken: " + extractedToken)
+
+  try {
+    // /verift and validate our token
+    const decoded = jwt.verify(extractedToken, admin_secret_key)
+    req.userId = decoded.userId
+    next()
+  } catch (err) {
+    res.status(401).json({ message: "Invalid Token" })
+  }
+}
+
+function authantication(token, key, req) {
+  if (!token) {
+    return { message: "Unauthorized" }
+  }
+  const extractedToken = token
+  // console.log("Actual TOken: " + extractedToken)
+
+  try {
+    // /verift and validate our token
+    const decoded = jwt.verify(extractedToken, key)
+    req.userId = decoded.userId
+  } catch (err) {
+    return { message: "Invalid Token" }
+  }
+  return { message: "Sucess" }
+}
+app.post("/checkAuth", async (req, res) => {
+  const { token, userId, userType } = req.body
+  const responce = authantication(token, admin_secret_key, req)
+  if (responce.message != "Sucess") {
+    let keys = [user_secret_key, admin_secret_key]
+    let key
+    if (userType == "admin") {
+      key = keys[1]
+    } else {
+      key = keys[0]
+    }
+    const token = jwt.sign({ userId: userId }, key, { expiresIn: "1h" })
+    res.json({
+      message: "Token Retake",
+      user: {
+        userName: userId,
+        token: token,
+        avatar: getAvatar(userId),
+        userType: userType,
+      },
+    })
+  } else {
+    res.json({
+      message: "token Expried",
+      user: {
+        userName: "",
+        token: "",
+        avatar: "",
+        userType: "",
+      },
+    })
+  }
+})
+app.post("/addItems", upload.single("image"), async (req, res) => {
+  const { token, name, catagory, qty, mrp, realRate, discription, brand } = req.body
+  const { filename } = req.file
+  console.log(filename)
+  console.log(name)
+  console.log(catagory)
+  console.log(qty)
+  console.log(mrp)
+  console.log(realRate)
+  console.log(discription)
+  console.log(brand)
+  const responce = authantication(token, admin_secret_key, req)
+  if (responce.message != "Sucess") {
+  }
+
+  const sql = "INSERT INTO items (name, catagory, qty, mrp, rate, discription, brand, imgae) VALUES (?,?,?,?,?,?,?,?)"
+  db.query(sql, [name, catagory, qty, mrp, realRate, discription, brand, filename], (err, result) => {
+    if (err) {
+      console.log("Error In Registration: " + err)
+    }
+  })
+})
 
 function getAvatar(mail) {
   return `https://gravatar.com/avatar/${md5(mail)}?s=128`
@@ -33,7 +171,7 @@ app.post("/register", async (req, res) => {
       console.log("Error In Registration: " + err)
     } else {
       let token
-      if (userType == "user") {
+      if (userType != "6546ajhgawd") {
         token = jwt.sign({ userId: userId }, user_secret_key, { expiresIn: "1h" })
       } else {
         token = jwt.sign({ userId: userId }, admin_secret_key, { expiresIn: "1h" })
@@ -74,7 +212,7 @@ app.post("/login", async (req, res) => {
       if (match) {
         let keys = [user_secret_key, admin_secret_key]
         let key
-        if (result[0].userType == "uhf3esf6354") {
+        if (result[0].userType == "admin") {
           key = keys[1]
         } else {
           key = keys[0]
@@ -96,27 +234,6 @@ app.post("/login", async (req, res) => {
     }
   })
 })
-
-//Authentication Middleware using JWT
-const userAuthenticate = (req, res, next) => {
-  const token = req.header("Authorization")
-  console.log("Unextracted Token: " + token)
-
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized" })
-  }
-  const extractedToken = token.split(" ")[1]
-  console.log("Actual TOken: " + extractedToken)
-
-  try {
-    // /verift and validate our token
-    const decoded = jwt.verify(extractedToken, user_secret_key)
-    req.userId = decoded.userId
-    next()
-  } catch (err) {
-    res.status(401).json({ message: "Invalid Token" })
-  }
-}
 
 app.get("/profile", userAuthenticate, (req, res) => {
   const userId = req.userId

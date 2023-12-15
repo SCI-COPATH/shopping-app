@@ -30,7 +30,7 @@
 
 }
 
-.form-inner form input {
+.form-inner form input, .form-inner form input textarea {
   padding: 5px 10px;
   margin: 2px 5px;
   width: 100%;

@@ -1,13 +1,15 @@
 import React, { useContext, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import StateContext from "../StateContext"
 import DispachContext from "../DispachContext"
 
 function Header() {
   const appState = useContext(StateContext)
   const appDispach = useContext(DispachContext)
+  const navigater = useNavigate()
   function handleLogout() {
     appDispach({ type: "logout" })
+    navigater("/")
   }
   function CartIcon() {
     return (
