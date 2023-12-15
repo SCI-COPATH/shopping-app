@@ -23,6 +23,7 @@ function Main() {
       userName: localStorage.getItem("userName"),
       token: localStorage.getItem("token"),
       avatar: localStorage.getItem("avatar"),
+      userType: localStorage.getItem("userType"),
     },
   }
   function ourReducer(draft, action) {
@@ -44,11 +45,13 @@ function Main() {
       localStorage.setItem("userName", state.user.userName)
       localStorage.setItem("token", state.user.token)
       localStorage.setItem("avatar", state.user.avatar)
+      localStorage.setItem("userType", state.user.userType)
       console.log("prob")
     } else {
       localStorage.removeItem("userName")
       localStorage.removeItem("token")
       localStorage.removeItem("avatar")
+      localStorage.removeItem("userType")
     }
   }, [state.loggedIn])
   return (

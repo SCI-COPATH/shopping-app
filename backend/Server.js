@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken")
 const db = require("./db/connection.js")
 const md5 = require("md5")
 const user_secret_key = "kanfkahbf3a65a1afbhg"
+const admin_secret_key = "4pkbjeb46lmkjhe6j546"
 const app = express()
 const port = 8081
 app.use(express.json())
@@ -19,20 +20,24 @@ app.get("/", (req, res) => {
 })
 //Registration Endpoint
 app.post("/register", async (req, res) => {
-  const { userName, userId, password } = req.body
+  const { userName, userType, userId, password } = req.body
 
   //Hash the Password
   const hashedPassword = await bcrypt.hash(password, 10)
   console.log(hashedPassword)
   console.log(hashedPassword.length)
 
-  const sql = "INSERT INTO users (userName, userId, password) VALUES (?, ?, ?)"
-  db.query(sql, [userName, userId, hashedPassword], (err, result) => {
+  const sql = "INSERT INTO users (userName, userType, userId, password) VALUES (?, ?, ?, ?)"
+  db.query(sql, [userName, userType, userId, hashedPassword], (err, result) => {
     if (err) {
       console.log("Error In Registration: " + err)
     } else {
-      const token = jwt.sign({ userId: userId }, user_secret_key, { expiresIn: "1h" })
-
+      let token
+      if (userType == "user") {
+        token = jwt.sign({ userId: userId }, user_secret_key, { expiresIn: "1h" })
+      } else {
+        token = jwt.sign({ userId: userId }, admin_secret_key, { expiresIn: "1h" })
+      }
       console.log(token)
       res.json({
         message: "Registration successful",
@@ -40,6 +45,7 @@ app.post("/register", async (req, res) => {
           userName: userName,
           token: token,
           avatar: getAvatar(userId),
+          userType: userType,
         },
       })
     }
@@ -62,17 +68,26 @@ app.post("/login", async (req, res) => {
       res.status(404).json({ message: "No username found" })
     } else {
       //compare hashed password
+
       const match = await bcrypt.compare(password, result[0].password)
-      console.log(result[0].userName)
+      console.log(result[0].userType)
       if (match) {
+        let keys = [user_secret_key, admin_secret_key]
+        let key
+        if (result[0].userType == "uhf3esf6354") {
+          key = keys[1]
+        } else {
+          key = keys[0]
+        }
         //create a jwt token
-        const token = jwt.sign({ userId: result[0].id }, user_secret_key, { expiresIn: "1h" })
+        const token = jwt.sign({ userId: result[0].id }, key, { expiresIn: "1h" })
         res.json({
           message: "Login Successful",
           user: {
             userName: result[0].userName,
             token: token,
             avatar: getAvatar(userId),
+            userType: result[0].userType,
           },
         })
       } else {

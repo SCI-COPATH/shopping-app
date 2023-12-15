@@ -16,7 +16,7 @@ function SignupPage() {
     // console.log(password)
     // console.log(name)
     try {
-      const response = await Axios.post("/register", { userName, userId, password })
+      const response = await Axios.post("/register", { userName, userType: "user", userId, password })
       console.log("User was successfully created.")
       console.log(response.data.user)
       appContext({ type: "login", data: response.data.user })

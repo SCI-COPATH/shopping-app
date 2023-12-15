@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom"
 import Axios from "axios"
 import DispachContext from "../DispachContext"
 
-function LoginPage() {
+function LoginPage(props) {
   const [userId, setUserId] = useState()
   const [password, setPassword] = useState()
   const navigate = useNavigate()
