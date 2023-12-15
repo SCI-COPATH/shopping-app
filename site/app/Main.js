@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import ReactDOM from "react-dom/client"
+import { createRoot } from "react-dom/client"
 
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { useImmerReducer } from "use-immer"
@@ -72,7 +72,7 @@ function Main() {
   )
 }
 
-const root = ReactDOM.createRoot(document.querySelector("#app"))
+const root = createRoot(document.querySelector("#app"))
 root.render(<Main />)
 
 if (module.hot) {
