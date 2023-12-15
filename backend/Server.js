@@ -3,12 +3,16 @@ const cors = require("cors")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const db = require("./db/connection.js")
-
+const md5 = require("md5")
 const user_secret_key = "kanfkahbf3a65a1afbhg"
 const app = express()
 const port = 8081
 app.use(express.json())
 app.use(cors())
+
+function getAvatar(mail) {
+  return `https://gravatar.com/avatar/${md5(mail)}?s=128`
+}
 
 app.get("/", (req, res) => {
   return res.json("Server is Redy to run")
@@ -35,6 +39,7 @@ app.post("/register", async (req, res) => {
         user: {
           userName: userName,
           token: token,
+          avatar: getAvatar(userId),
         },
       })
     }
@@ -67,6 +72,7 @@ app.post("/login", async (req, res) => {
           user: {
             userName: result[0].userName,
             token: token,
+            avatar: getAvatar(userId),
           },
         })
       } else {

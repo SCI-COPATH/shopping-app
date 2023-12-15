@@ -18,6 +18,7 @@ function Main() {
     user: {
       userName: localStorage.getItem("userName"),
       token: localStorage.getItem("token"),
+      avatar: localStorage.getItem("avatar"),
     },
   }
   function ourReducer(draft, action) {
@@ -38,10 +39,12 @@ function Main() {
       console.log("Login is true")
       localStorage.setItem("userName", state.user.userName)
       localStorage.setItem("token", state.user.token)
+      localStorage.setItem("avatar", state.user.avatar)
       console.log("prob")
     } else {
       localStorage.removeItem("userName")
       localStorage.removeItem("token")
+      localStorage.removeItem("avatar")
     }
   }, [state.loggedIn])
   return (
