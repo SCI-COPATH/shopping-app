@@ -15,6 +15,8 @@ Axios.defaults.baseURL = "http://localhost:8081"
 import Profile from "./components/Profile"
 import YourOrder from "./components/YourOrder"
 import Cart from "./components/Cart"
+import Stocks from "./components/Stocks"
+import AddItem from "./components/AddItem"
 
 function Main() {
   const initialStage = {
@@ -65,6 +67,8 @@ function Main() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/orders" element={<YourOrder />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/stock" element={<Stocks />} />
+            <Route path="/admin/add-item" element={<AddItem />} />
           </Routes>
         </BrowserRouter>
       </DispachContext.Provider>

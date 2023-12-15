@@ -9,6 +9,15 @@ function Header() {
   function handleLogout() {
     appDispach({ type: "logout" })
   }
+  function CartIcon() {
+    return (
+      <>
+        <Link to="/cart" className="text-white mx-1  my-auto header-search-icon">
+          <i className="fa-solid fa-cart-shopping my-auto"></i>
+        </Link>
+      </>
+    )
+  }
   return (
     <header className="header-bar bg-primary mb-3">
       <div className="container d-flex  justify-content-around flex-column flex-sm-row align-items-center p-3">
@@ -22,9 +31,7 @@ function Header() {
           <form className="d-flex" role="search">
             <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
             <button className="fa-solid fa-search text-white my-auto icon-but" type="submit"></button>
-            <Link to="/cart" className="text-white mx-1  my-auto header-search-icon">
-              <i className="fa-solid fa-cart-shopping my-auto"></i>
-            </Link>
+            {appState.user.userType == "user" ? <CartIcon /> : ""}
           </form>
 
           <span className="dropdown mx-1  my-auto">
@@ -37,8 +44,8 @@ function Header() {
                 </Link>
               </li>
               <li>
-                <Link className="dropdown-item" to="/orders">
-                  Your order
+                <Link className="dropdown-item" to={appState.user.userType == "admin" ? "/stock" : "/orders"}>
+                  {appState.user.userType == "admin" ? "stocks" : "Your orders"}
                 </Link>
               </li>
               <li>

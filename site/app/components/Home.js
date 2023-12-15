@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react"
 import StateContext from "../StateContext"
 import DispachContext from "../DispachContext"
 import Header from "./Header"
+import AdminHome from "./AdminHome"
 
 function Home() {
   const appState = useContext(StateContext)
@@ -12,8 +13,7 @@ function Home() {
   return (
     <>
       <Header />
-      <h1>Welcome {appState.user.userName}</h1>
-      <button onClick={handileLogout}>logout</button>
+      <AdminHome />
     </>
   )
 }

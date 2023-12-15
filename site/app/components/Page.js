@@ -8,7 +8,7 @@ function Page(props) {
   }, [])
 
   return (
-    <Container formMode={props.formMode} wide={props.wide} backgroundClass={props.backgroundClass}>
+    <Container formMode={props.formMode} wide={props.wide} backgroundURL={props.backgroundURL}>
       {props.children}
     </Container>
   )

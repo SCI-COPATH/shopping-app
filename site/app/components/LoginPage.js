@@ -26,7 +26,7 @@ function LoginPage(props) {
     }
   }
   return (
-    <Page title="Login" formMode={true} backgroundClass="login-background">
+    <Page title="Login" formMode={true} backgroundURL="url('./assets/loginBackground.svg')">
       <form className="regForm" onSubmit={handleSubmit}>
         <h5>Welcome back! 👋</h5>
         <h2>Login to your account</h2>
