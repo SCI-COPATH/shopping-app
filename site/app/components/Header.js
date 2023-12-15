@@ -19,7 +19,7 @@ function Header() {
     )
   }
   return (
-    <header className="header-bar bg-primary mb-3">
+    <header className="header-bar bg-primary  fixed-top">
       <div className="container d-flex  justify-content-around flex-column flex-sm-row align-items-center p-3">
         <h4 className="my-0 mr-md-auto font-weight-normal">
           <Link to="/" className="text-white">

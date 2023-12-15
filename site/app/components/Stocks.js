@@ -1,11 +1,14 @@
 import React, { useEffect } from "react"
 import Header from "./Header"
+import Page from "./Page"
 
 function Stocks() {
   return (
     <>
       <Header />
-      <h1>Stocks</h1>
+      <Page>
+        <h1>Stocks</h1>
+      </Page>
     </>
   )
 }

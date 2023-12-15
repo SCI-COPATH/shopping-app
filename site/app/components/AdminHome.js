@@ -26,6 +26,18 @@ function AdminHome() {
                 Update stocks
               </a>
             </div>
+            <div>
+              <a className="icon-link icon-link-hover fw-semibold" href="#">
+                <i className="fa-solid fa-user-plus" aria-hidden="true"></i>
+                Add Admin
+              </a>
+            </div>
+            <div>
+              <a className="icon-link icon-link-hover fw-semibold" href="#">
+                <i className="fa-solid fa-user-minus" aria-hidden="true"></i>
+                Remove Admin
+              </a>
+            </div>
           </div>
           <div className="p-2 m-2 w-100">
             <h5>Customer status</h5>

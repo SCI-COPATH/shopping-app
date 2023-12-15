@@ -12,8 +12,8 @@ function LoginPage(props) {
   async function handleSubmit(e) {
     e.preventDefault()
     try {
-      // console.log(userId)
-      // console.log(password)
+      console.log(userId)
+      console.log(password)
       const response = await Axios.post("/login", { userId, password })
 
       appDispach({ type: "login", data: response.data.user })
@@ -26,7 +26,7 @@ function LoginPage(props) {
     }
   }
   return (
-    <Page title="Login" formMode={true} backgroundURL="url('./assets/loginBackground.svg')">
+    <Page title="Login" formMode={true} backgroundURL="url(./assets/loginBackground.svg)">
       <form className="regForm" onSubmit={handleSubmit}>
         <h5>Welcome back! 👋</h5>
         <h2>Login to your account</h2>

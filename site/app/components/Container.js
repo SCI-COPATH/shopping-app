@@ -1,17 +1,17 @@
 import React, { useEffect } from "react"
 
 function Container(props) {
-  function OuterInner() {
+  function SinglePage() {
+    return <div className={"container py-md-5  top-padding" + (props.wide ? "" : " top-padding container--narrow")}>{props.children}</div>
+  }
+  function formBlock() {
     return (
-      <div className={props.formMode ? ("form-outer outer " + Boolean(props.backgroundURL) ? "background-class" : "") : "outer " + Boolean(props.backgroundURL) ? "background-class" : ""} style={{ backgroundImage: props.backgroundURL }}>
-        <div className={props.formMode ? "form-inner inner" : "inner"}>{props.children}</div>
+      <div className={Boolean(props.backgroundURL) ? "form-outer outer background-class" : "form-outer outer top-padding"} style={{ backgroundImage: props.backgroundURL }}>
+        <div className={"form-inner inner"}>{props.children}</div>
       </div>
     )
   }
-  function SinglePage() {
-    return <div className={"container py-md-5 " + (props.wide ? "" : "container--narrow")}>{props.children}</div>
-  }
-  return props.formMode ? <OuterInner /> : <SinglePage />
+  return props.formMode ? formBlock() : SinglePage()
 }
 
 export default Container

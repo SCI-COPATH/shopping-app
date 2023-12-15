@@ -26,7 +26,7 @@ function SignupPage() {
     }
   }
   return (
-    <Page title="Sign up" formMode={true} backgroundURL='url("./assets/signupBackgorund.svg")'>
+    <Page title="Sign up" formMode={true} backgroundURL="url(./assets/signupBackgorund.svg)">
       <form className="signupForm" onSubmit={handilSublit}>
         <h5>hello ! 👋</h5>
         <h2>Create an account</h2>

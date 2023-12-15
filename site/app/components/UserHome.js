@@ -1,9 +1,12 @@
 import React, { useEffect } from "react"
+import Page from "./Page"
 
 function UserHome() {
   return (
     <>
-      <h1>User Home</h1>
+      <Page>
+        <h1>User Home</h1>
+      </Page>
     </>
   )
 }
