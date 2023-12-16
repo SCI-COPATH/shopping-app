@@ -19,7 +19,9 @@ function SignupPage() {
       const response = await Axios.post("/register", { userName, userType: "user", userId, password })
       console.log("User was successfully created.")
       console.log(response.data.user)
-      appContext({ type: "login", data: response.data.user })
+      const itemList = await Axios.get("/product-list")
+      console.log(itemList.data.data)
+      appContext({ type: "login", data: response.data.user, items: itemList.data.data })
       naviagte("/")
     } catch (e) {
       console.log(e)

@@ -20,6 +20,12 @@ import AddItem from "./components/AddItem"
 import UpdateStock from "./components/UpdateStock"
 
 function Main() {
+  let temp
+  try {
+    temp = JSON.parse(localStorage.getItem("items"))
+  } catch (error) {
+    temp = ""
+  }
   const initialStage = {
     loggedIn: Boolean(localStorage.getItem("token")),
     user: {
@@ -28,15 +34,20 @@ function Main() {
       avatar: localStorage.getItem("avatar"),
       userType: localStorage.getItem("userType"),
     },
+    items: JSON.parse(localStorage.getItem("items")),
   }
   function ourReducer(draft, action) {
     switch (action.type) {
       case "login":
         draft.loggedIn = true
         draft.user = action.data
+        draft.items = action.items
         return
       case "logout":
         draft.loggedIn = false
+        return
+      case "update-items":
+        draft.items = action.items
         return
     }
   }
@@ -49,7 +60,8 @@ function Main() {
       localStorage.setItem("token", state.user.token)
       localStorage.setItem("avatar", state.user.avatar)
       localStorage.setItem("userType", state.user.userType)
-      console.log("prob")
+      localStorage.setItem("items", JSON.stringify(state.items))
+      console.log(state.items)
     } else {
       localStorage.removeItem("userName")
       localStorage.removeItem("token")
@@ -57,46 +69,46 @@ function Main() {
       localStorage.removeItem("userType")
     }
   }, [state.loggedIn])
-  useEffect(() => {
-    console.log("run in start")
-    async function updateToken() {
-      try {
-        const res = await Axios.post("/checkAuth", { userId: state.user.userName, tokrn: state.user.token, userType: state.user.userType })
-        console.log(res.data.message)
-        state.user = res.data.user
-        // console.log(res.data.status)
-        // state.loggedIn = !res.data.status
-        if (res.data.status) {
-          localStorage.setItem("token", res.data.user.token)
-          console.log("Token Retake")
-        } else {
-          console.log("Token Exprire")
-          localStorage.removeItem("userName")
-          localStorage.removeItem("token")
-          localStorage.removeItem("avatar")
-          localStorage.removeItem("userType")
-          state.loggedIn = false
-        }
-      } catch (error) {
-        localStorage.removeItem("userName")
-        localStorage.removeItem("token")
-        localStorage.removeItem("avatar")
-        localStorage.removeItem("userType")
-        state.user.token = ""
-        state.user.userName = ""
-        state.user.userType = ""
-        state.user.avatar = ""
-        state.loggedIn = false
-      }
-    }
-    if (Boolean(state.user.token)) {
-      // try {
-      updateToken()
-      // } catch (error) {
-      //   console.log("ERROR")
-      // }
-    }
-  }, [])
+  // useEffect(() => {
+  //   console.log("run in start")
+  //   async function updateToken() {
+  //     try {
+  //       const res = await Axios.post("/checkAuth", { userId: state.user.userName, tokrn: state.user.token, userType: state.user.userType })
+  //       console.log(res.data.message)
+  //       state.user = res.data.user
+  //       // console.log(res.data.status)
+  //       // state.loggedIn = !res.data.status
+  //       if (res.data.status) {
+  //         localStorage.setItem("token", res.data.user.token)
+  //         console.log("Token Retake")
+  //       } else {
+  //         console.log("Token Exprire")
+  //         localStorage.removeItem("userName")
+  //         localStorage.removeItem("token")
+  //         localStorage.removeItem("avatar")
+  //         localStorage.removeItem("userType")
+  //         state.loggedIn = false
+  //       }
+  //     } catch (error) {
+  //       localStorage.removeItem("userName")
+  //       localStorage.removeItem("token")
+  //       localStorage.removeItem("avatar")
+  //       localStorage.removeItem("userType")
+  //       state.user.token = ""
+  //       state.user.userName = ""
+  //       state.user.userType = ""
+  //       state.user.avatar = ""
+  //       state.loggedIn = false
+  //     }
+  //   }
+  //   if (Boolean(state.user.token)) {
+  //     // try {
+  //     updateToken()
+  //     // } catch (error) {
+  //     //   console.log("ERROR")
+  //     // }
+  //   }
+  // }, [])
   return (
     <StateContext.Provider value={state}>
       <DispachContext.Provider value={dispatch}>

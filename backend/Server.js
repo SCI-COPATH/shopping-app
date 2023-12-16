@@ -216,7 +216,6 @@ app.post("/register", async (req, res) => {
 })
 
 //Login Endpoint
-
 app.post("/login", async (req, res) => {
   const { userId, password } = req.body
   //Check if username and password are present
@@ -243,7 +242,12 @@ app.post("/login", async (req, res) => {
           key = keys[0]
         }
         //create a jwt token
+
         const token = jwt.sign({ userId: result[0].id }, key, { expiresIn: "1h" })
+        // let resData = await databaseStatus()
+        // console.log("DATA")
+        // console.log(resData)
+        // console.log("END DATA")
         res.json({
           message: "Login Successful",
           user: {
@@ -252,6 +256,7 @@ app.post("/login", async (req, res) => {
             avatar: getAvatar(userId),
             userType: result[0].userType,
           },
+          // items: resData,
         })
       } else {
         res.status(401).json({ message: "Invalid Password" })

@@ -15,10 +15,11 @@ function LoginPage(props) {
       console.log(userId)
       console.log(password)
       const response = await Axios.post("/login", { userId, password })
-
-      appDispach({ type: "login", data: response.data.user })
-
       console.log(response.data)
+      const itemList = await Axios.get("/product-list")
+      console.log(itemList.data.data)
+      appDispach({ type: "login", data: response.data.user, items: itemList.data.data })
+
       console.log("Seucessfuly set")
       navigate("/")
     } catch (error) {
