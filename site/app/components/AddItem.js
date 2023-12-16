@@ -39,12 +39,15 @@ function AddItem() {
       }
 
       const responce = await Axios.post("/addItems", formData, config)
-
-      console.log(responce)
+      console.log(responce.data.data)
     } catch (error) {
-      if (error.response.data == "Invalid Token" || error.response.data == "Unauthorized") {
-        appDispach({ type: "logout" })
-        naviater("/")
+      try {
+        if (error.response.data == "Invalid Token" || error.response.data == "Unauthorized") {
+          appDispach({ type: "logout" })
+          naviater("/")
+        }
+      } catch (error) {
+        console.log("Error")
       }
       console.log(error.response.data)
     }

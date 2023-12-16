@@ -12,9 +12,9 @@ const admin_secret_key = "4pkbjeb46lmkjhe6j546"
 
 const app = express()
 const port = 8081
-
 app.use(express.json())
 app.use(cors())
+app.use(express.static("public"))
 
 const isImage = (req, file, callback) => {
   if (file.mimetype.startsWith("image")) {
@@ -107,6 +107,7 @@ app.post("/checkAuth", async (req, res) => {
     const token = jwt.sign({ userId: userId }, key, { expiresIn: "1h" })
     res.json({
       message: "Token Retake",
+      status: true,
       user: {
         userName: userId,
         token: token,
@@ -117,6 +118,7 @@ app.post("/checkAuth", async (req, res) => {
   } else {
     res.json({
       message: "token Expried",
+      status: false,
       user: {
         userName: "",
         token: "",
@@ -125,6 +127,18 @@ app.post("/checkAuth", async (req, res) => {
       },
     })
   }
+})
+app.get("/product-list", (req, res) => {
+  const sql = "SELECT * FROM items"
+
+  db.query(sql, [], (err, result) => {
+    if (err) {
+      console.log("Error Searching for userId: " + err)
+      res.status(404).json({ message: "No username found" })
+    } else {
+      res.json({ message: "Sucess", data: result })
+    }
+  })
 })
 app.post("/addItems", upload.single("image"), async (req, res) => {
   const { token, name, catagory, qty, mrp, realRate, discription, brand } = req.body
@@ -139,12 +153,23 @@ app.post("/addItems", upload.single("image"), async (req, res) => {
   console.log(brand)
   const responce = authantication(token, admin_secret_key, req)
   if (responce.message != "Sucess") {
+    res.status(401).json(responce)
   }
 
   const sql = "INSERT INTO items (name, catagory, qty, mrp, rate, discription, brand, imgae) VALUES (?,?,?,?,?,?,?,?)"
   db.query(sql, [name, catagory, qty, mrp, realRate, discription, brand, filename], (err, result) => {
     if (err) {
       console.log("Error In Registration: " + err)
+      res.status(403).json({ message: "Token-Sucess db-error" })
+    } else {
+      const sql = "SELECT * FROM items"
+
+      db.query(sql, [], (err, result) => {
+        if (err) {
+        } else {
+          res.json({ message: "Sucess", data: result })
+        }
+      })
     }
   })
 })

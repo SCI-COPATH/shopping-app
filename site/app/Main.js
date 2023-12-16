@@ -17,6 +17,7 @@ import YourOrder from "./components/YourOrder"
 import Cart from "./components/Cart"
 import Stocks from "./components/Stocks"
 import AddItem from "./components/AddItem"
+import UpdateStock from "./components/UpdateStock"
 
 function Main() {
   const initialStage = {
@@ -61,15 +62,20 @@ function Main() {
     async function updateToken() {
       try {
         const res = await Axios.post("/checkAuth", { userId: state.user.userName, tokrn: state.user.token, userType: state.user.userType })
-        console.log(res.data.user)
+        console.log(res.data.message)
         state.user = res.data.user
-        if (res.data.message != "token Expried") {
+        // console.log(res.data.status)
+        // state.loggedIn = !res.data.status
+        if (res.data.status) {
           localStorage.setItem("token", res.data.user.token)
+          console.log("Token Retake")
         } else {
+          console.log("Token Exprire")
           localStorage.removeItem("userName")
           localStorage.removeItem("token")
           localStorage.removeItem("avatar")
           localStorage.removeItem("userType")
+          state.loggedIn = false
         }
       } catch (error) {
         localStorage.removeItem("userName")
@@ -80,7 +86,7 @@ function Main() {
         state.user.userName = ""
         state.user.userType = ""
         state.user.avatar = ""
-        state.loggedIn = "false"
+        state.loggedIn = false
       }
     }
     if (Boolean(state.user.token)) {
@@ -104,6 +110,7 @@ function Main() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/stock" element={<Stocks />} />
             <Route path="/admin/add-item" element={<AddItem />} />
+            <Route path="/admin/update-stock" element={<UpdateStock />} />
           </Routes>
         </BrowserRouter>
       </DispachContext.Provider>

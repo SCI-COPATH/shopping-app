@@ -21,10 +21,10 @@ function AdminHome() {
             </div>
 
             <div>
-              <a className="icon-link icon-link-hover fw-semibold" href="#">
+              <Link className="icon-link icon-link-hover fw-semibold" to="/admin/update-stock">
                 <i className="fa-solid fa-pencil" aria-hidden="true"></i>
                 Update stocks
-              </a>
+              </Link>
             </div>
             <div>
               <a className="icon-link icon-link-hover fw-semibold" href="#">
