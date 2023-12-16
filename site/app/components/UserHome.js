@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react"
 import Page from "./Page"
 import StateContext from "../StateContext"
+import DispachContext from "../DispachContext"
+import { useNavigate } from "react-router-dom"
 
 {
   /* <div class="card" style={{ width: "18rem" }}>
@@ -29,7 +31,8 @@ import StateContext from "../StateContext"
 
 function UserHome() {
   const appState = useContext(StateContext)
-
+  const appDispach = useContext(DispachContext)
+  const nav = useNavigate()
   const [select, setSelect] = useState("All")
 
   let catagores = appState.items.map((x) => x.catagory).filter((item, index) => appState.items.map((x) => x.catagory).indexOf(item) === index)
@@ -58,7 +61,15 @@ function UserHome() {
                   Add to cart
                   <i className="fa-solid fa-cart-shopping p-1"></i>
                 </button>
-                <button type="button" className="btn btn-primary  mx-1" id={x.id}>
+                <button
+                  type="button"
+                  className="btn btn-primary  mx-1"
+                  id={x.id}
+                  onClick={(e) => {
+                    appDispach({ type: "select", selectedItem: e.target.id })
+                    nav("/product")
+                  }}
+                >
                   View More
                 </button>
               </div>

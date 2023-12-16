@@ -20,6 +20,7 @@ import AddItem from "./components/AddItem"
 import UpdateStock from "./components/UpdateStock"
 import AddAdmin from "./components/AddAdmin"
 import RemoveAdmin from "./components/RemoveAdmin"
+import ViewSingleItom from "./components/ViewSingleItom"
 
 function Main() {
   let tempItem
@@ -44,6 +45,7 @@ function Main() {
     },
     items: tempItem,
     accounts: tempAccounts,
+    selectedItem: localStorage.getItem("selectedItem"),
   }
   function ourReducer(draft, action) {
     switch (action.type) {
@@ -62,6 +64,8 @@ function Main() {
       case "set-accounts":
         draft.accounts = action.accounts
         return
+      case "select":
+        draft.selectedItem = action.selectedItem
     }
   }
   const [state, dispatch] = useImmerReducer(ourReducer, initialStage)
@@ -80,6 +84,7 @@ function Main() {
       localStorage.removeItem("avatar")
       localStorage.removeItem("userType")
       localStorage.removeItem("accounts")
+      localStorage.removeItem("selectedItem")
     }
   }, [state.loggedIn])
   useEffect(() => {
@@ -88,7 +93,9 @@ function Main() {
   useEffect(() => {
     localStorage.setItem("accounts", JSON.stringify(state.accounts))
   }, [state.accounts])
-
+  useEffect(() => {
+    localStorage.setItem("selectedItem", state.selectedItem)
+  }, [state.selectedItem])
   useEffect(() => {
     async function updateToken() {
       try {
@@ -142,8 +149,9 @@ function Main() {
             <Route path="/stock" element={<Stocks />} />
             <Route path="/admin/add-item" element={<AddItem />} />
             <Route path="/admin/update-stock" element={<UpdateStock />} />
-            <Route path="admin/add-admin" element={<AddAdmin />} />
-            <Route path="admin/remove-admin" element={<RemoveAdmin />} />
+            <Route path="/admin/add-admin" element={<AddAdmin />} />
+            <Route path="/admin/remove-admin" element={<RemoveAdmin />} />
+            <Route path="/product" element={<ViewSingleItom />} />
           </Routes>
         </BrowserRouter>
       </DispachContext.Provider>
