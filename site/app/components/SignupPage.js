@@ -18,10 +18,16 @@ function SignupPage() {
     try {
       const response = await Axios.post("/register", { userName, userType: "user", userId, password })
       console.log("User was successfully created.")
-      console.log(response.data.user)
+      // console.log(response.data.user.)
       const itemList = await Axios.get("/product-list")
       console.log(itemList.data.data)
-      appContext({ type: "login", data: response.data.user, items: itemList.data.data })
+      let accounts = ""
+      // if (response.data.user.userType == "admin") accounts = await Axios.get("/get-user-accounts")
+      // else accounts = ""
+      // console.log(accounts.data.data)
+      // appDispach({ type: "login", data: response.data.user, items: itemList.data.data, accounts: accounts.data.data })
+
+      appContext({ type: "login", data: response.data.user, items: itemList.data.data, accounts: accounts })
       naviagte("/")
     } catch (e) {
       console.log(e)

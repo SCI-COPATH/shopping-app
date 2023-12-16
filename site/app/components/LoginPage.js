@@ -18,7 +18,12 @@ function LoginPage(props) {
       console.log(response.data)
       const itemList = await Axios.get("/product-list")
       console.log(itemList.data.data)
-      appDispach({ type: "login", data: response.data.user, items: itemList.data.data })
+      let accounts
+      if (response.data.user.userType == "admin") accounts = (await Axios.get("/get-user-accounts")).data.data
+      else accounts = ""
+      console.log(accounts)
+      appDispach({ type: "login", data: response.data.user, items: itemList.data.data, accounts: accounts })
+      // set-accounts
 
       console.log("Seucessfuly set")
       navigate("/")

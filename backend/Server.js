@@ -140,6 +140,76 @@ app.get("/product-list", (req, res) => {
     }
   })
 })
+
+app.post("/update-items", async (req, res) => {
+  const { token, id, name, qty, mrp, rate, discription } = req.body
+  // console.log(token)
+  // console.log(id)
+  // console.log(name)
+  // console.log(mrp)
+  // console.log(qty)
+  // console.log(rate)
+  // console.log(discription)
+  const responce = authantication(token, admin_secret_key, req)
+  console.log(responce.message)
+  if (responce.message != "Sucess") {
+    res.status(401).json(responce)
+  }
+
+  const query = `UPDATE items SET name= ?, qty= ?, mrp= ?, rate= ?, discription= ? WHERE items.id= ?`
+  console.log(query)
+  db.query(query, [name, qty, mrp, rate, discription, id], async (err, resu) => {
+    if (err) throw err
+    const sql = "SELECT * FROM items"
+
+    db.query(sql, async (errr, result) => {
+      if (err) throw errr
+      res.json({ message: "Sucess", data: result })
+    })
+  })
+})
+
+app.get("/get-user-accounts", (req, res) => {
+  // const { token } = req.body
+  // const responce = authantication(token, admin_secret_key, req)
+  // if (responce.message != "Sucess") {
+  //   res.status(401).json(responce)
+  // }
+  const sql = "SELECT * FROM users"
+  db.query(sql, (error, result) => {
+    if (error) throw error
+    res.json({ message: "Sucess", data: result })
+  })
+})
+
+app.post("/update-user-type", async (req, res) => {
+  const { token, id } = req.body
+  console.log(token)
+  console.log(id)
+  const responce = authantication(token, admin_secret_key, req)
+  if (responce.message != "Sucess") {
+    res.status(401).json(responce)
+  }
+  sql = "UPDATE users SET userType='user' WHERE users.userId=? "
+  db.query(sql, id, async (error, resu) => {
+    if (error) throw error
+  })
+  res.json({ message: "Sucess" })
+})
+app.post("/update-admin-type", async (req, res) => {
+  const { token, id } = req.body
+  console.log(token)
+  console.log(id)
+  const responce = authantication(token, admin_secret_key, req)
+  if (responce.message != "Sucess") {
+    res.status(401).json(responce)
+  }
+  sql = "UPDATE users SET userType='admin' WHERE users.userId=? "
+  db.query(sql, id, async (error, resu) => {
+    if (error) throw error
+  })
+  res.json({ message: "Sucess" })
+})
 app.post("/addItems", upload.single("image"), async (req, res) => {
   const { token, name, catagory, qty, mrp, realRate, discription, brand } = req.body
   const { filename } = req.file

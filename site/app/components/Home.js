@@ -7,7 +7,6 @@ import UserHome from "./UserHome"
 
 function Home() {
   const appState = useContext(StateContext)
-
   return (
     <>
       <Header />

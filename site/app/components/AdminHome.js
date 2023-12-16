@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from "react"
 import Page from "./Page"
 import StateContext from "../StateContext"
 import { Link } from "react-router-dom"
-
 function AdminHome() {
   const appState = useContext(StateContext)
 
@@ -27,16 +26,16 @@ function AdminHome() {
               </Link>
             </div>
             <div>
-              <a className="icon-link icon-link-hover fw-semibold" href="#">
+              <Link className="icon-link icon-link-hover fw-semibold" to="/admin/add-admin">
                 <i className="fa-solid fa-user-plus" aria-hidden="true"></i>
                 Add Admin
-              </a>
+              </Link>
             </div>
             <div>
-              <a className="icon-link icon-link-hover fw-semibold" href="#">
+              <Link className="icon-link icon-link-hover fw-semibold" to="admin/remove-admin">
                 <i className="fa-solid fa-user-minus" aria-hidden="true"></i>
                 Remove Admin
-              </a>
+              </Link>
             </div>
           </div>
           <div className="p-2 m-2 w-100">

@@ -18,13 +18,21 @@ import Cart from "./components/Cart"
 import Stocks from "./components/Stocks"
 import AddItem from "./components/AddItem"
 import UpdateStock from "./components/UpdateStock"
+import AddAdmin from "./components/AddAdmin"
+import RemoveAdmin from "./components/RemoveAdmin"
 
 function Main() {
-  let temp
+  let tempItem
+  let tempAccounts
   try {
-    temp = JSON.parse(localStorage.getItem("items"))
+    tempAccounts = JSON.parse(localStorage.getItem("accounts"))
   } catch (error) {
-    temp = ""
+    tempAccounts = ""
+  }
+  try {
+    tempItem = JSON.parse(localStorage.getItem("items"))
+  } catch (error) {
+    tempItem = ""
   }
   const initialStage = {
     loggedIn: Boolean(localStorage.getItem("token")),
@@ -34,7 +42,8 @@ function Main() {
       avatar: localStorage.getItem("avatar"),
       userType: localStorage.getItem("userType"),
     },
-    items: JSON.parse(localStorage.getItem("items")),
+    items: tempItem,
+    accounts: tempAccounts,
   }
   function ourReducer(draft, action) {
     switch (action.type) {
@@ -42,6 +51,7 @@ function Main() {
         draft.loggedIn = true
         draft.user = action.data
         draft.items = action.items
+        draft.accounts = action.accounts
         return
       case "logout":
         draft.loggedIn = false
@@ -49,11 +59,13 @@ function Main() {
       case "update-items":
         draft.items = action.items
         return
+      case "set-accounts":
+        draft.accounts = action.accounts
+        return
     }
   }
   const [state, dispatch] = useImmerReducer(ourReducer, initialStage)
   useEffect(() => {
-    console.log("Inisde use effect")
     if (state.loggedIn) {
       console.log("Login is true")
       localStorage.setItem("userName", state.user.userName)
@@ -61,54 +73,61 @@ function Main() {
       localStorage.setItem("avatar", state.user.avatar)
       localStorage.setItem("userType", state.user.userType)
       localStorage.setItem("items", JSON.stringify(state.items))
-      console.log(state.items)
+      localStorage.setItem("accounts", JSON.stringify(state.accounts))
     } else {
       localStorage.removeItem("userName")
       localStorage.removeItem("token")
       localStorage.removeItem("avatar")
       localStorage.removeItem("userType")
+      localStorage.removeItem("accounts")
     }
   }, [state.loggedIn])
-  // useEffect(() => {
-  //   console.log("run in start")
-  //   async function updateToken() {
-  //     try {
-  //       const res = await Axios.post("/checkAuth", { userId: state.user.userName, tokrn: state.user.token, userType: state.user.userType })
-  //       console.log(res.data.message)
-  //       state.user = res.data.user
-  //       // console.log(res.data.status)
-  //       // state.loggedIn = !res.data.status
-  //       if (res.data.status) {
-  //         localStorage.setItem("token", res.data.user.token)
-  //         console.log("Token Retake")
-  //       } else {
-  //         console.log("Token Exprire")
-  //         localStorage.removeItem("userName")
-  //         localStorage.removeItem("token")
-  //         localStorage.removeItem("avatar")
-  //         localStorage.removeItem("userType")
-  //         state.loggedIn = false
-  //       }
-  //     } catch (error) {
-  //       localStorage.removeItem("userName")
-  //       localStorage.removeItem("token")
-  //       localStorage.removeItem("avatar")
-  //       localStorage.removeItem("userType")
-  //       state.user.token = ""
-  //       state.user.userName = ""
-  //       state.user.userType = ""
-  //       state.user.avatar = ""
-  //       state.loggedIn = false
-  //     }
-  //   }
-  //   if (Boolean(state.user.token)) {
-  //     // try {
-  //     updateToken()
-  //     // } catch (error) {
-  //     //   console.log("ERROR")
-  //     // }
-  //   }
-  // }, [])
+  useEffect(() => {
+    localStorage.setItem("items", JSON.stringify(state.items))
+  }, [state.items])
+  useEffect(() => {
+    localStorage.setItem("accounts", JSON.stringify(state.accounts))
+  }, [state.accounts])
+
+  useEffect(() => {
+    async function updateToken() {
+      try {
+        const res = await Axios.post("/checkAuth", { userId: state.user.userName, tokrn: state.user.token, userType: state.user.userType })
+        console.log(res.data.message)
+        state.user = res.data.user
+        // console.log(res.data.status)
+        // state.loggedIn = !res.data.status
+        if (res.data.status) {
+          localStorage.setItem("token", res.data.user.token)
+          console.log("Token Retake")
+        } else {
+          console.log("Token Exprire")
+          localStorage.removeItem("userName")
+          localStorage.removeItem("token")
+          localStorage.removeItem("avatar")
+          localStorage.removeItem("userType")
+          state.loggedIn = false
+        }
+      } catch (error) {
+        localStorage.removeItem("userName")
+        localStorage.removeItem("token")
+        localStorage.removeItem("avatar")
+        localStorage.removeItem("userType")
+        state.user.token = ""
+        state.user.userName = ""
+        state.user.userType = ""
+        state.user.avatar = ""
+        state.loggedIn = false
+      }
+    }
+    if (Boolean(state.user.token)) {
+      // try {
+      updateToken()
+      // } catch (error) {
+      //   console.log("ERROR")
+      // }
+    }
+  }, [])
   return (
     <StateContext.Provider value={state}>
       <DispachContext.Provider value={dispatch}>
@@ -123,6 +142,8 @@ function Main() {
             <Route path="/stock" element={<Stocks />} />
             <Route path="/admin/add-item" element={<AddItem />} />
             <Route path="/admin/update-stock" element={<UpdateStock />} />
+            <Route path="admin/add-admin" element={<AddAdmin />} />
+            <Route path="admin/remove-admin" element={<RemoveAdmin />} />
           </Routes>
         </BrowserRouter>
       </DispachContext.Provider>

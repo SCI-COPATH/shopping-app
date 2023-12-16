@@ -2,24 +2,42 @@ import React, { useContext, useEffect, useState } from "react"
 import Header from "./Header"
 import Page from "./Page"
 import StateContext from "../StateContext"
+import Axios from "axios"
+import DispachContext from "../DispachContext"
 
 function UpdateStock() {
   const appState = useContext(StateContext)
+  const appDispach = useContext(DispachContext)
   const [select, setSelect] = useState("Select Product")
   const [id, setID] = useState()
 
   // function handilSelect() {}
 
   function SelectForm() {
-    const [name, setName] = useState()
-    const [discription, setDiscription] = useState()
-    const [rate, setRate] = useState()
-    const [mrp, setMrp] = useState()
-    const [qty, setqty] = useState()
     const product = appState.items.filter((x) => x.id == id)
-    console.log(product)
-    function handileSumbit(e) {
+    const [name, setName] = useState(product[0].name)
+    const [discription, setDiscription] = useState(product[0].discription)
+    const [rate, setRate] = useState(product[0].rate)
+    const [mrp, setMrp] = useState(product[0].mrp)
+    const [qty, setqty] = useState(product[0].qty)
+
+    // setID(id)
+
+    async function handileSumbit(e) {
+      console.log(id)
       e.preventDefault()
+      try {
+        const responce = await Axios.post("/update-items", { token: appState.user.token, id, name, qty, mrp, rate, discription })
+        console.log(responce.data.data)
+        appDispach({ type: "update-items", items: responce.data.data })
+      } catch (error) {
+        if (error.response.data == "Invalid Token" || error.response.data == "Unauthorized") {
+          appDispach({ type: "logout" })
+          naviater("/")
+        }
+      }
+
+      // token, id, name, qty, mrp, realRate, discription'
     }
     return (
       <>
