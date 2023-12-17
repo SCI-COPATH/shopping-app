@@ -140,7 +140,63 @@ app.get("/product-list", (req, res) => {
     }
   })
 })
+app.get("/address", (req, res) => {
+  const { userId } = req.body
+  const sql = "SELECT * FROM address WHERE address.userId = ?"
 
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.log("Error Searching for userId: " + err)
+      res.status(404).json({ message: "No username found" })
+    } else {
+      res.json({ message: "Sucess", data: result })
+    }
+  })
+})
+
+app.post("/add-address", async (req, res) => {
+  const { userId, address } = req.body
+  console.log(userId)
+  console.log(address)
+  // const sql = "INSERT INTO address (userId, address) VALUES (?,?)"
+
+  // db.query(sql, [userId, address], (err, result) => {
+  //   if (err) {
+  //     console.log("Error Searching for userId: " + err)
+  //     res.status(404).json({ message: "No username found" })
+  //   } else {
+  //     res.json({ message: "Sucess", data: result })
+  //   }
+  // })
+})
+
+app.post("/update-items-qty", async (req, res) => {
+  const { id, qty } = req.body
+  console.log(id)
+  console.log(qty)
+  const query = `UPDATE items SET qty= ? WHERE items.id= ?`
+  console.log(query)
+  db.query(query, [qty, id], async (err, resu) => {
+    if (err) throw err
+    res.json({ message: "Sucess" })
+  })
+})
+app.post("/place-order", async (req, res) => {
+  const { itemId, qty, userId } = req.body
+
+  console.log(itemId)
+  console.log(qty)
+  //Hash the Password
+
+  const sql = "INSERT INTO orders (userId, itemId,qty) VALUES (?, ? ,?)"
+  db.query(sql, [userId, itemId, qty], (err, result) => {
+    if (err) {
+      console.log("Error In Registration: " + err)
+    } else {
+      res.json({ message: "sucess" })
+    }
+  })
+})
 app.post("/update-items", async (req, res) => {
   const { token, id, name, qty, mrp, rate, discription } = req.body
   // console.log(token)
@@ -213,14 +269,7 @@ app.post("/update-admin-type", async (req, res) => {
 app.post("/addItems", upload.single("image"), async (req, res) => {
   const { token, name, catagory, qty, mrp, realRate, discription, brand } = req.body
   const { filename } = req.file
-  console.log(filename)
-  console.log(name)
-  console.log(catagory)
-  console.log(qty)
-  console.log(mrp)
-  console.log(realRate)
-  console.log(discription)
-  console.log(brand)
+
   const responce = authantication(token, admin_secret_key, req)
   if (responce.message != "Sucess") {
     res.status(401).json(responce)
@@ -279,6 +328,7 @@ app.post("/register", async (req, res) => {
           token: token,
           avatar: getAvatar(userId),
           userType: userType,
+          userid: userId,
         },
       })
     }
@@ -325,6 +375,7 @@ app.post("/login", async (req, res) => {
             token: token,
             avatar: getAvatar(userId),
             userType: result[0].userType,
+            userId: userId,
           },
           // items: resData,
         })

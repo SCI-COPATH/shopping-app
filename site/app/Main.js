@@ -25,6 +25,12 @@ import ViewSingleItom from "./components/ViewSingleItom"
 function Main() {
   let tempItem
   let tempAccounts
+  let tempAddress
+  try {
+    tempAddress = JSON.parse(localStorage.getItem("address"))
+  } catch (error) {
+    tempAddress = ""
+  }
   try {
     tempAccounts = JSON.parse(localStorage.getItem("accounts"))
   } catch (error) {
@@ -42,9 +48,11 @@ function Main() {
       token: localStorage.getItem("token"),
       avatar: localStorage.getItem("avatar"),
       userType: localStorage.getItem("userType"),
+      userId: localStorage.getItem("userId"),
     },
     items: tempItem,
     accounts: tempAccounts,
+    address: tempAddress,
     selectedItem: localStorage.getItem("selectedItem"),
   }
   function ourReducer(draft, action) {
@@ -54,6 +62,7 @@ function Main() {
         draft.user = action.data
         draft.items = action.items
         draft.accounts = action.accounts
+        draft.address = action.address
         return
       case "logout":
         draft.loggedIn = false
@@ -66,6 +75,8 @@ function Main() {
         return
       case "select":
         draft.selectedItem = action.selectedItem
+      case "update-address":
+        draft.address = action.address
     }
   }
   const [state, dispatch] = useImmerReducer(ourReducer, initialStage)
@@ -76,17 +87,24 @@ function Main() {
       localStorage.setItem("token", state.user.token)
       localStorage.setItem("avatar", state.user.avatar)
       localStorage.setItem("userType", state.user.userType)
+      localStorage.setItem("userId", state.user.userId)
       localStorage.setItem("items", JSON.stringify(state.items))
       localStorage.setItem("accounts", JSON.stringify(state.accounts))
+      localStorage.setItem("address", JSON.stringify(state.address))
     } else {
+      localStorage.removeItem("userId")
       localStorage.removeItem("userName")
       localStorage.removeItem("token")
       localStorage.removeItem("avatar")
       localStorage.removeItem("userType")
       localStorage.removeItem("accounts")
       localStorage.removeItem("selectedItem")
+      localStorage.removeItem("address")
     }
   }, [state.loggedIn])
+  useEffect(() => {
+    localStorage.setItem("address", JSON.stringify(state.address))
+  }, [state.address])
   useEffect(() => {
     localStorage.setItem("items", JSON.stringify(state.items))
   }, [state.items])

@@ -1,11 +1,14 @@
 import React, { useEffect } from "react"
 import Header from "./Header"
+import Page from "./Page"
 
 function YourOrder() {
   return (
     <>
       <Header />
-      <h1>this is our our orders</h1>
+      <Page title="profile" wide={true}>
+        <h1>hai</h1>
+      </Page>
     </>
   )
 }
